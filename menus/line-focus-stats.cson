@@ -1,0 +1,22 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle line-focus-stats'
+      'command': 'line-focus-stats:toggle'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'line-focus-stats'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'line-focus-stats:toggle'
+        }
+      ]
+    ]
+  }
+]
