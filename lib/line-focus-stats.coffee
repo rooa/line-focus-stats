@@ -1,33 +1,35 @@
 LineFocusStatsView = require './line-focus-stats-view'
-{CompositeDisposable} = require 'atom'
 
 module.exports = LineFocusStats =
-  lineFocusStatsView: null
-  modalPanel: null
-  subscriptions: null
+  lineFocusStatsViews: null
 
   activate: (state) ->
-    @lineFocusStatsView = new LineFocusStatsView(state.lineFocusStatsViewState)
-    @modalPanel = atom.workspace.addModalPanel(item: @lineFocusStatsView.getElement(), visible: false)
+    console.log 'activate LineFocusStats'
+    @lineFocusStatsViews = []
 
-    # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
-    @subscriptions = new CompositeDisposable
+    atom.commands.add 'atom-workspace',
+      'line-focus-stats:toggle': => @toggle()
 
-    # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'line-focus-stats:toggle': => @toggle()
+    enabled = false
 
   deactivate: ->
-    @modalPanel.destroy()
-    @subscriptions.dispose()
-    @lineFocusStatsView.destroy()
+    @disable()
 
-  serialize: ->
-    lineFocusStatsViewState: @lineFocusStatsView.serialize()
+  enable: ->
+    @enabled = true
+
+    atom.workspace.observeTextEditors (editor) =>
+      @lineFocusStatsViews.push(new LineFocusStatsView(editor))
+
+  disable: ->
+    while lineFocusStatsView = @lineFocusStatsViews.shift()
+      lineFocusStatsView.destroy()
+
+    @enabled = false
 
   toggle: ->
     console.log 'LineFocusStats was toggled!'
-
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
+    if @enabled
+      @disable()
     else
-      @modalPanel.show()
+      @enable()
