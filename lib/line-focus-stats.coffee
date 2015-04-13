@@ -10,7 +10,7 @@ module.exports = LineFocusStats =
     atom.commands.add 'atom-workspace',
       'line-focus-stats:toggle': => @toggle()
 
-    # @enable()
+    enabled = false
 
   deactivate: ->
     @disable()
